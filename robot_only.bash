@@ -2,7 +2,7 @@
 # starts a Python script that demonstrates use of the robot, without environment or RL framework
 
 SRC_PATH=${1}
-PROJECT_DIR="robot-arm-joints-no-gazebo-scenario"
+PROJECT_DIR="cross-kinematic-low-level-reaching"
 ROOT_PATH="${SRC_PATH}/${PROJECT_DIR}"
 
 if [ -d "$ROOT_PATH" ]; then
