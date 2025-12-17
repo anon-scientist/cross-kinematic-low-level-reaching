@@ -67,6 +67,8 @@ PROJECT_DIR="cross-kinematic-low-level-reaching"
 echo ARGS $#
 if [ "$#" == "1" ] ; then
 SRC_PATH=${1} ;
+else
+SC_PATH="./../" ;
 fi
 ROOT_PATH="${SRC_PATH}/${PROJECT_DIR}"
 

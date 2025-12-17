@@ -2,8 +2,7 @@
 $-task kinematic high-level reaching scenario
 """
 import numpy as np
-import argparse
-
+import gymnasium as gym ;
 from gazebo_sim.simulation.Environment import GenericEnvironment
 from gazebo_sim.simulation.PandaRobot import PandaRobot as Robot
 from cl_experiment.parsing import Kwarg_Parser
@@ -21,7 +20,7 @@ class RobotAction():
         self.label = label
         self.amount = amount
 
-class RobotArmEnvironment():
+class RobotArmEnvironment(gym.Env):
     def __init__(self,**kwargs) -> None:
         self.config = self.parse_args(**kwargs)
 
@@ -78,6 +77,14 @@ class RobotArmEnvironment():
            'terminate_cond': 'unassigned',
         }
     
+    @property
+    def action_space(self):
+        return gym.spaces.Discrete(self.nr_actions)
+    
+    @property
+    def observation_space(self):
+        return gym.spaces.Box(0,1,shape=self.observation_shape)
+    
     def get_current_status(self):
         return (self.info['object'][0], self.info['terminate_cond'])
     
@@ -117,7 +124,7 @@ class RobotArmEnvironment():
         self.task_id = self.task_list[task_index]
         self.reset()
 
-    def reset(self):
+    def reset(self,**kwargs):
         self.current_name = self.task_id
         self.info['object'] = (self.current_name,)
         self.step_count = 0
@@ -170,10 +177,11 @@ class RobotArmEnvironment():
                 reward = 1
                 self.info['terminate_cond'] = "COND: GOAL REACHED"
         return reward, truncated, terminated
+    
+    # to be compatible with gymnsium API, reimplement if required
+    def render(self, **kwargs): pass ;
 
     def parse_args(self,**kwargs):
-        parser = argparse.ArgumentParser('ICRL', 'argparser of the ICRL-App.', exit_on_error=False)
-
         parser = Kwarg_Parser(**kwargs) ;
         # ----
         parser.add_argument("--use_coords_in_obs", type=str, default="no",required=False ) ;
